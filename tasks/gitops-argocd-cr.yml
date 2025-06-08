@@ -1,0 +1,35 @@
+---
+- name: ansible-automation > gitops-argocd-cr > fetch ArgoCD CR
+  kubernetes.core.k8s_info:
+    api_key: "{{ ocp_token }}"
+    host: "{{ ocp_host }}"
+    validate_certs: false
+    api_version: argoproj.io/v1alpha1
+    kind: ArgoCD
+    name: openshift-gitops
+    namespace: openshift-gitops
+  register: argocd_cr_info
+
+- name: ansible-automation > gitops-argocd-cr > merge desired patch into existing spec
+  ansible.builtin.set_fact:
+    updated_argocd_cr: >-
+      {{ 
+        argocd_cr_info.resources[0] | combine(
+          {
+            'spec': argocd_cr_info.resources[0].spec | combine({
+              'rbac': {
+                'policy': rbac_policy
+              }
+            }, recursive=True)
+          },
+          recursive=True
+        ) 
+      }}
+
+- name: ansible_automation > gitops-argocd-cr > patch ArgoCD CR
+  kubernetes.core.k8s:
+    api_key: "{{ ocp_token }}"
+    host: "{{ ocp_host }}"
+    validate_certs: false
+    state: present
+    definition: "{{ updated_argocd_cr }}"

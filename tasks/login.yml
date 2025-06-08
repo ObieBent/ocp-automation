@@ -1,0 +1,14 @@
+---
+- name: ansible-automation > login > Authenticate to OpenShift and fetch login token
+  block:
+    - name: ansible-automation > login > Login to OpenShift
+      redhat.openshift.openshift_auth:
+        host: "{{ ocp_host }}"
+        username: "{{ ocp_username }}"
+        password: "{{ ocp_password }}"
+        validate_certs: false
+      register: k8s_auth_result
+
+    - name: ansible-automation > login > Set OpenShift login token
+      ansible.builtin.set_fact:
+        ocp_token: "{{ k8s_auth_result.k8s_auth.api_key }}"

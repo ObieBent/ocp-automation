@@ -1,0 +1,25 @@
+---
+- name: ansible-automation > gitops-project > Ensure ArgoCD Project "{{ argocd_project_name }}" Exists
+  kubernetes.core.k8s_info:
+    api_key: "{{ ocp_token }}"
+    host: "{{ ocp_host }}"
+    api_version: v1
+    kind: Namespace
+    name: "{{ argocd_project_name }}"
+    validate_certs: false
+  register: argocd_project_name_info
+
+- name: ansible-automation > gitops-project > Template the project""
+  ansible.builtin.set_fact:
+    argocd_project_name_definition: "{{ lookup('ansible.builtin.template', 'argocd-project.yaml.j2') }}"
+
+- name: ansible-automation > gitops-project > Create OpenShift Project "{{ argocd_project_name }}"
+  kubernetes.core.k8s:
+    api_key: "{{ ocp_token }}"
+    host: "{{ ocp_host }}"
+    state: present
+    definition: "{{ argocd_project_name_definition }}"
+    validate_certs: false
+  when: >
+    'argocd_project_name_info.resources == ""' and
+    'argocd_project_name_info.resources[0].metadata.name != argocd_project_name'

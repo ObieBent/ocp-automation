@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: "{{ argocd_project_name }}"
+  namespace: openshift-gitops
+spec:
+  description: "ArgoCD Project for {{ ocp_ns }}"
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  destinations:
+    - name: in-cluster
+      namespace: "{{ ocp_ns }}"
+      server: "https://kubernetes.default.svc"
+  sourceRepos:
+    - "*"
+  roles: 
+    - name: "{{ argocd_project_name }}-rbac"
+      description: "{{ argocd_project_name }} role"
+      policies: 
+        - p, proj:{{ argocd_project_name }}:{{ argocd_project_name }}-rbac, applications, *, {{ argocd_project_name }}/*, allow
+        - p, proj:{{ argocd_project_name }}:{{ argocd_project_name }}-rbac, applicationsets, *, {{ argocd_project_name }}/*, allow
+        - p, proj:{{ argocd_project_name }}:{{ argocd_project_name }}-rbac, logs, get, {{ argocd_project_name }}/*, allow
+      groups: 
+        - "{{ ocp_group }}"

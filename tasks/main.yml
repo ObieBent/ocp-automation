@@ -1,0 +1,17 @@
+---
+- name: ansible-automation > main > Load default variables
+  include_vars: "{{ item }}"
+  loop: 
+    - "{{ role_path }}/vars/main.yml"
+
+- name: ansible-automation > main > login
+  ansible.builtin.include_tasks: login.yml
+
+- name: ansible-automation > main > project
+  ansible.builtin.include_tasks: project.yml
+
+- name: ansible-automation > main > gitops-project
+  ansible.builtin.include_tasks: gitops-project.yml
+
+- name: ansible-automation > main > gitops-argocd-cr
+  ansible.builtin.include_tasks: gitops-argocd-cr.yml

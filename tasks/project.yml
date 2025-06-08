@@ -1,0 +1,25 @@
+---
+- name: ansible-automation > project > Ensure OpenShift Project "{{ ocp_ns }}" Exists
+  kubernetes.core.k8s_info:
+    api_key: "{{ ocp_token }}"
+    host: "{{ ocp_host }}"
+    api_version: v1
+    kind: Namespace
+    name: "{{ ocp_ns }}"
+    validate_certs: false
+  register: project_info
+
+- name: ansible-automation > project > Template the project""
+  ansible.builtin.set_fact:
+    ocp_project_definition: "{{ lookup('ansible.builtin.template', 'project.yaml.j2') }}"
+
+- name: ansible-automation > project > Create OpenShift Project "{{ ocp_ns }}"
+  kubernetes.core.k8s:
+    api_key: "{{ ocp_token }}"
+    host: "{{ ocp_host }}"
+    state: present
+    definition: "{{ ocp_project_definition }}"
+    validate_certs: false
+  when: >
+    'project_info.resources == ""' and
+    'project_info.resources[0].metadata.name != ocp_ns'
