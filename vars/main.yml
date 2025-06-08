@@ -6,12 +6,12 @@ rbac_policy: |
   p, role:none, projects, get, */*, deny
   p, role:none, accounts, get, */*, deny
   p, role:none, gpgkeys, get, */*, deny
-  p, role:{{ argocd_project_name }}, applications, *, {{ argocd_project_name }}/*, allow
-  p, role:{{ argocd_project_name }}, logs, get, {{ argocd_project_name }}/*, allow
-  p, role:{{ argocd_project_name }}, exec, create, {{ argocd_project_name }}/*, allow
-  p, role:{{ argocd_project_name }}, projects, get, {{ argocd_project_name }}, allow
-  p, role:{{ argocd_project_name }}, repositories, *, {{ argocd_project_name }}/*, allow
-  p, role:{{ argocd_project_name }}, clusters, get, https://kubernetes.default.svc, allow
+  p, role:{{ argocd_project_name }}-rbac, applications, *, {{ argocd_project_name }}/*, allow
+  p, role:{{ argocd_project_name }}-rbac, logs, get, {{ argocd_project_name }}/*, allow
+  p, role:{{ argocd_project_name }}-rbac, exec, create, {{ argocd_project_name }}/*, allow
+  p, role:{{ argocd_project_name }}-rbac, projects, get, {{ argocd_project_name }}, allow
+  p, role:{{ argocd_project_name }}-rbac, repositories, *, {{ argocd_project_name }}/*, allow
+  p, role:{{ argocd_project_name }}-rbac, clusters, get, https://kubernetes.default.svc, allow
   g, {{ ocp_group }}, role:{{ argocd_project_name }}-rbac
   g, system:cluster-admins, role:admin
   g, gitops-admins, role:admin
