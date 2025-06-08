@@ -9,5 +9,3 @@ BSD
 ## Author
 
 Boris ASSOGBA
-
-<borisassogba@live.fr>
