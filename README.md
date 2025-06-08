@@ -8,4 +8,5 @@ BSD
 
 ## Author
 
-Boris ASSOGBA <borisassogba@live.fr>
+Boris ASSOGBA
+<borisassogba@live.fr>
